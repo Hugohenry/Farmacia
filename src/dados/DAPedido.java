@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import entidades.Pedido;
+import entidades.Status;
 
 public class DAPedido implements IDAPedido {
 
@@ -105,10 +106,53 @@ public class DAPedido implements IDAPedido {
 	
 	public void aceitar(int id) {
 		
+		Status stat = null;
+		
+		try {
+            Connection con = Conexao.getConnection();
+
+            // Cria um preparedStatement
+            String sql = "UPDATE PEDIDO SET STATUS = ? WHERE ID = ?";
+            PreparedStatement statement = con.prepareStatement(sql);
+
+            // Preenche os valores
+            statement.setString(1, stat.ACEITO.name());
+            statement.setInt(2, id);
+
+            // Executa
+            statement.execute();
+
+            statement.close();
+            con.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 	}
 	
 	public void recuzar(int id) {
+Status stat = null;
 		
+		try {
+            Connection con = Conexao.getConnection();
+
+            // Cria um preparedStatement
+            String sql = "UPDATE PEDIDO SET STATUS = ? WHERE ID = ?";
+            PreparedStatement statement = con.prepareStatement(sql);
+
+            // Preenche os valores
+            statement.setString(1, stat.RECUSADO.name());
+            statement.setInt(2, id);
+
+            // Executa
+            statement.execute();
+
+            statement.close();
+            con.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 	}
 	
 	public List<Pedido> list() {
@@ -139,14 +183,14 @@ public class DAPedido implements IDAPedido {
             Connection con = Conexao.getConnection();
 
             // Cria o preparedStatement
-            String sql = "SELECT PACIENTE.NOME \"nomePaciente\", PEDIDO.*, REMEDIO.* FROM PACIENTE INNER JOIN PEDIDO ON PACIENTE.ID = PEDIDO.ID_PACIENTE INNER JOIN REMEDIO ON RAMEDIO.ID = PEDIDO.ID_REMEDIO";
+            String sql = "SELECT PACIENTE.NOME \"nomePaciente\", PEDIDO.*, REMEDIO.ID \"idRem\", REMEDIO.NOME \"remNome\", REMEDIO.LABORATORIO \"remLab\", REMEDIO.VOLUME_LIQUIDO \"remVol\", REMEDIO.PESO \"remPeso\", REMEDIO.DOSE \"remDose\" FROM PACIENTE INNER JOIN PEDIDO ON PACIENTE.ID = PEDIDO.ID_PACIENTE INNER JOIN REMEDIO ON RAMEDIO.ID = PEDIDO.ID_REMEDIO";
             PreparedStatement statement = con.prepareStatement(sql);
 
             // Executa
             ResultSet r = statement.executeQuery();
 
             while (r.next()) {
-                retorno.add(lerPedido(r));
+                retorno.add(lerPedidoByPaciente(r));
             }
 
         } catch (SQLException e) {
@@ -159,8 +203,24 @@ public class DAPedido implements IDAPedido {
 		Pedido p = new Pedido();
 		p.setId(r.getInt("id"));
 		p.setIdPaciente(r.getInt("id_paciente"));
-		p.setStatus(r.getString("status"));
+		p.setStatus(Enum.valueOf(Status.class, r.getString("status")));
 		p.setRemedio(r.getInt("id_remedio"));
+		return p;
+	}
+	
+	private Pedido lerPedidoByPaciente(ResultSet r) throws SQLException {
+		Pedido p = new Pedido();
+		p.setId(r.getInt("id"));
+		p.setIdPaciente(r.getInt("id_paciente"));
+		p.setStatus(Enum.valueOf(Status.class, r.getString("status")));
+		p.setRemedio(r.getInt("id_remedio"));
+		p.setNomePaciente(r.getString("nomePaciente"));
+		p.setIdRem(r.getInt("idRem"));
+		p.setRemLab(r.getString("remLab"));
+		p.setRemNome(r.getString("remNome"));
+		p.setRemVol(r.getInt("remVol"));
+		p.setRemPeso(r.getFloat("remPeso"));
+		p.setRemDose(r.getInt("remDose"));
 		return p;
 	}
 	
