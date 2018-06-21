@@ -42,8 +42,8 @@ public class Pedido {
 		return status;
 	}
 
-	public void setStatus(Status status) {
-		this.status = status;
+	public void setStatus(String status) {
+		this.status.setDesc(status);
 	}
 
 	public int getRemedio() {
