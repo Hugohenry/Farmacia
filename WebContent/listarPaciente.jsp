@@ -10,6 +10,7 @@
 	<title>Listar Paciente</title>
 	</head>
 	<body>
+		<h1>Adicionar Paciente</h1>
 		<form action="AdicionarPaciente" method="post">
 			<label>Login:&nbsp;&nbsp;</label> <input type="text" name="login" placeholder="Saci2018" required/> <br/>
 			<label>Senha:&nbsp;&nbsp;</label> <input type="password" name="password"/> <br/>
@@ -23,6 +24,7 @@
 		</form>
 	<% List<Paciente> pac = (ArrayList<Paciente>)request.getAttribute("pacientes"); 
 if(pac != null) { %>
+		<h1>Lista de Pacientes</h1>
 		<table>
 		<tr>
 			<th>Login</th>
